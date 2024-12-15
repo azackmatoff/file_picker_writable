@@ -163,12 +163,10 @@ class MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _openFilePicker() async {
-    final fileInfo =
-        await FilePickerWritable().openFile((fileInfo, file) async {
+    final fileInfo = await FilePickerWritable().openFile((fileInfo, file) async {
       _logger.fine('Got picker result: $fileInfo');
       final data = await _appDataBloc.store.load();
-      await _appDataBloc.store
-          .save(data.copyWith(files: data.files + [fileInfo]));
+      await _appDataBloc.store.save(data.copyWith(files: data.files + [fileInfo]));
       return fileInfo;
     });
     if (fileInfo == null) {
@@ -190,8 +188,7 @@ class MainScreenState extends State<MainScreen> {
       return;
     }
     final data = await _appDataBloc.store.load();
-    await _appDataBloc.store
-        .save(data.copyWith(files: data.files + [fileInfo]));
+    await _appDataBloc.store.save(data.copyWith(files: data.files + [fileInfo]));
   }
 }
 
@@ -249,9 +246,7 @@ class FileInfoDisplay extends StatelessWidget {
                         await FilePickerWritable().readFile(
                             identifier: fileInfo.identifier,
                             reader: (fileInfo, file) async {
-                              await SimpleAlertDialog
-                                  .readFileContentsAndShowDialog(
-                                      fileInfo, file, context);
+                              await SimpleAlertDialog.readFileContentsAndShowDialog(fileInfo, file, context);
                             });
                       } on Exception catch (e) {
                         if (!context.mounted) {
@@ -267,8 +262,7 @@ class FileInfoDisplay extends StatelessWidget {
                       await FilePickerWritable().writeFile(
                           identifier: fileInfo.identifier,
                           writer: (file) async {
-                            final content =
-                                'New Content written at ${DateTime.now()}.\n\n';
+                            final content = 'New Content written at ${DateTime.now()}.\n\n';
                             await file.writeAsString(content);
                             // ignore: use_build_context_synchronously
                             await SimpleAlertDialog(
@@ -281,8 +275,7 @@ class FileInfoDisplay extends StatelessWidget {
                   IconButton(
                     onPressed: () async {
                       try {
-                        await FilePickerWritable()
-                            .disposeIdentifier(fileInfo.identifier);
+                        await FilePickerWritable().disposeIdentifier(fileInfo.identifier);
                       } on Exception catch (e) {
                         if (!context.mounted) {
                           return;
@@ -291,9 +284,7 @@ class FileInfoDisplay extends StatelessWidget {
                       }
                       final appData = await appDataBloc.store.load();
                       await appDataBloc.store.save(appData.copyWith(
-                          files: appData.files
-                              .where((element) => element != fileInfo)
-                              .toList()));
+                          files: appData.files.where((element) => element != fileInfo).toList()));
                     },
                     icon: const Icon(Icons.remove_circle_outline),
                   ),
@@ -308,13 +299,11 @@ class FileInfoDisplay extends StatelessWidget {
 }
 
 class SimpleAlertDialog extends StatelessWidget {
-  const SimpleAlertDialog({Key? key, this.titleText, required this.bodyText})
-      : super(key: key);
+  const SimpleAlertDialog({Key? key, this.titleText, required this.bodyText}) : super(key: key);
   final String? titleText;
   final String bodyText;
 
-  Future<void> show(BuildContext context) =>
-      showDialog<void>(context: context, builder: (context) => this);
+  Future<void> show(BuildContext context) => showDialog<void>(context: context, builder: (context) => this);
 
   @override
   Widget build(BuildContext context) {
